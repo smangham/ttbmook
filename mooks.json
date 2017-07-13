@@ -1,0 +1,25 @@
+{
+    "mooks": [
+        {   "name": "Hanged Man",
+            "willpower": 10,
+            "defence": 5,
+            "HP": 7,
+            "skills": {
+                "melee": 5,
+                "athletics": 3
+            },
+    		"attacks": {
+                "name": "Fists",
+                "range": 2,
+                "AP": 1,
+                "skill": "melee",
+                "triggers": [
+                    {  "suit": "C", 
+                        "type": "Success",
+                        "ability": "#poison1"
+                    }
+                ]
+            }
+        }
+    ]
+}
