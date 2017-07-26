@@ -7,8 +7,12 @@ class Mook:
         self.willpower = willpower
         self.defence = defence
         self.hp = hp
+        self.dead = False
 
         self.attacks = attacks
+
+    def attack(self, target, attack_id=0, deck=None):
+        self.attacks[attack_id].attack(target, deck)
 
     @classmethod
     def mooks_from_json(cls, filename):
@@ -45,10 +49,16 @@ class Attack:
         self.ap = ap
         self.skill = skill
 
+    def attack(self, target, deck=None):
+        if deck is None:
+            pass  # Get default deck
+        raise NotImplementedError
+
     @classmethod
     def from_json(cls, json_block):
         return cls(name=json_block.name, range=json_block.range,
                    ap=json_block.AP, skill=json_block.skill)
+
 
 class SkillCheck:
     """A general skill check."""
@@ -66,7 +76,6 @@ class AttackCheck(SkillCheck):
     @classmethod
     def from_json(cls, json_block):
         raise NotImplementedError
-
 
 
 class AttrDict(dict):

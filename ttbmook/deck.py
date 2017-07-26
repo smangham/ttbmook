@@ -1,6 +1,6 @@
 import random
 import copy
-import json
+
 
 class Card:
     def __init__(self, value, suit):
@@ -88,20 +88,19 @@ class Deck:
                 return card_max
 
 
-
-
-deck = Deck()
-for i in range(0,10):
-    print(deck.flip(bonus=0))
-print("+")
-for i in range(0,10):
-    print(deck.flip(bonus=1))
-print("++")
-for i in range(0,10):
-    print(deck.flip(bonus=2))
-print("-")
-for i in range(0,10):
-    print(deck.flip(bonus=-1))
-print("--")
-for i in range(0,10):
-    print(deck.flip(bonus=-2))
+if __name__ == "__main__":
+    deck = Deck()
+    for i in range(0,10):
+        print(deck.flip(bonus=0))
+    print("+")
+    for i in range(0,10):
+        print(deck.flip(bonus=1))
+    print("++")
+    for i in range(0,10):
+        print(deck.flip(bonus=2))
+    print("-")
+    for i in range(0,10):
+        print(deck.flip(bonus=-1))
+    print("--")
+    for i in range(0,10):
+        print(deck.flip(bonus=-2))
