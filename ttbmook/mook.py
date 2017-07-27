@@ -2,16 +2,43 @@ import json
 
 
 class Mook:
-    def __init__(self, name, willpower, defence, hp, attacks=None):
+    """
+    A Malifaux TTB NPC.
+    """
+    def __init__(self, name, willpower, defence, hp,
+                 is_enforcer=False, attacks=None):
         self.name = name
         self.willpower = willpower
         self.defence = defence
         self.hp = hp
         self.dead = False
+        self.is_enforcer = is_enforcer
 
         self.attacks = attacks
 
+    @property
+    def hp(self):
+        return self.__hp
+
+    @hp.setter
+    def hp(self, x):
+        """
+        Setter for hp.  Sets dead flag if hp is below zero and not enforcer level.
+
+        :param int x: New hp
+        """
+        self.__hp = x
+        if self.__hp < 0 and not self.is_enforcer:
+            self.dead = True
+
     def attack(self, target, attack_id=0, deck=None):
+        """
+        Perform an attack against target.
+
+        :param Mook target: Target Mook
+        :param int attack_id: Attack id if Mook has multiple attacks
+        :param deck: Deck from which to draw Cards
+        """
         self.attacks[attack_id].attack(target, deck)
 
     @classmethod
@@ -33,6 +60,12 @@ class Mook:
 
     @classmethod
     def from_json(cls, json_block):
+        """
+        Construct a single Mook from a JSON block/AttrDict.
+
+        :param AttrDict json_block: JSON block in AttrDict format
+        :return Mook: New Mook
+        """
         attacks = []
         for json_attack in json_block.attacks:
             attacks.append(Attack.from_json(json_attack))
@@ -50,12 +83,24 @@ class Attack:
         self.skill = skill
 
     def attack(self, target, deck=None):
+        """
+        Perform this attack against a target.
+
+        :param Mook target: Target Mook of this attack
+        :param deck: Deck from which to draw Cards
+        """
         if deck is None:
             pass  # Get default deck
         raise NotImplementedError
 
     @classmethod
     def from_json(cls, json_block):
+        """
+        Construct a single Attack from a JSON block/AttrDict.
+
+        :param AttrDict json_block: JSON block in AttrDict format
+        :return: New Attack
+        """
         return cls(name=json_block.name, range=json_block.range,
                    ap=json_block.AP, skill=json_block.skill)
 

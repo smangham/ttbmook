@@ -37,6 +37,17 @@ class MookTest(unittest.TestCase):
         self.assertEqual(1, self.mook.attacks[0].ap)
         self.assertEqual("melee", self.mook.attacks[0].skill)
 
+    def test_dead_flag(self):
+        self.assertFalse(self.mook.dead)
+        self.mook.hp = -1
+        self.assertTrue(self.mook.dead)
+
+    def test_dead_flag_enforcer(self):
+        self.mook.is_enforcer = True
+        self.assertFalse(self.mook.dead)
+        self.mook.hp = -1
+        self.assertFalse(self.mook.dead)
+
     def test_mook_attack(self):
         deck = DummyDeck()
         self.assertEqual(7, self.mook.hp)
