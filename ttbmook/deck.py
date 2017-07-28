@@ -15,13 +15,13 @@ class Card:
     def is_suit(self, suit):
         return suit in self._suit
     def damage(self):
-        if value is 0:
+        if self._value is 0:
             return "None"
-        elif value <= 5:
+        elif self._value <= 5:
             return "Mild"
-        elif value <= 10:
+        elif self._value <= 10:
             return "Moderate"
-        elif value <= 13:
+        elif self._value <= 13:
             return "Severe"
         else:
             return "Mild+Severe"

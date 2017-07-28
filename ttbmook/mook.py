@@ -28,7 +28,7 @@ class Mook:
         :param int x: New hp
         """
         self.__hp = x
-        if self.__hp < 0 and not self.is_enforcer:
+        if self.__hp <= 0 and not self.is_enforcer:
             self.dead = True
 
     def attack(self, target, attack_id=0, deck=None):
@@ -38,8 +38,9 @@ class Mook:
         :param Mook target: Target Mook
         :param int attack_id: Attack id if Mook has multiple attacks
         :param deck: Deck from which to draw Cards
+        :return bool: Attack hit?
         """
-        self.attacks[attack_id].attack(target, deck)
+        return self.attacks[attack_id].attack(target, deck)
 
     @classmethod
     def mooks_from_json(cls, filename):
@@ -76,22 +77,43 @@ class Mook:
 
 
 class Attack:
-    def __init__(self, name, range, ap, skill):
+    def __init__(self, name, range, ap, skill, damage):
         self.name = name
         self.range = range
         self.ap = ap
         self.skill = skill
+        self.damage = damage
+        self.damage.append(self.damage[2] + self.damage[0])
 
-    def attack(self, target, deck=None):
+    def get_damage(self, damage_string):
+        """
+        Convert damage string to number.
+
+        :param str damage_string: None, Weak, Moderate, Severe, Severe+Weak
+        :return int: Damage number
+        """
+        if damage_string == "None":
+            return 0
+        damage_map = ["Mild", "Moderate", "Severe", "Mild+Severe"]
+        return self.damage[damage_map.index(damage_string)]
+
+    def attack(self, target, deck):
         """
         Perform this attack against a target.
 
         :param Mook target: Target Mook of this attack
         :param deck: Deck from which to draw Cards
+        :return bool: Attack hit?
         """
-        if deck is None:
-            pass  # Get default deck
-        raise NotImplementedError
+        flip = deck.flip()
+        if flip.value() >= target.defence:
+            modifier = (flip.value() - target.defence)//5 - 1
+            flip = deck.flip(modifier=modifier)
+            damage = self.get_damage(flip.damage())
+            target.hp -= damage
+            return True
+        return False
+
 
     @classmethod
     def from_json(cls, json_block):
@@ -102,7 +124,8 @@ class Attack:
         :return: New Attack
         """
         return cls(name=json_block.name, range=json_block.range,
-                   ap=json_block.AP, skill=json_block.skill)
+                   ap=json_block.AP, skill=json_block.skill,
+                   damage=json_block.damage)
 
 
 class SkillCheck:

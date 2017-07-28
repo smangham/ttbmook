@@ -8,11 +8,13 @@ from ttbmook.deck import Card
 class DummyDeck:
     def __init__(self):
         self.cards = [
-            Card(0, ""),
             Card(1, "T"),
-            Card(8, "T"),
-            Card(13, "T"),
-            Card(14, "CMRT")
+            Card(11, "T"),
+            Card(8, "R"),
+            Card(11, "T"),
+            Card(14, "CMRT"),
+            Card(11, "T"),
+            Card(1, "R"),
         ]
 
     def flip(self, *args, **kwargs):
@@ -48,29 +50,38 @@ class MookTest(unittest.TestCase):
         self.mook.hp = -1
         self.assertFalse(self.mook.dead)
 
+    def test_mook_attack_get_damage(self):
+        attack = self.mook.attacks[0]
+        self.assertEqual(0, attack.get_damage("None"))
+        self.assertEqual(1, attack.get_damage("Mild"))
+        self.assertEqual(2, attack.get_damage("Moderate"))
+        self.assertEqual(3, attack.get_damage("Severe"))
+        self.assertEqual(4, attack.get_damage("Mild+Severe"))
+
     def test_mook_attack(self):
+        # TODO add non-straight damage flips
         deck = DummyDeck()
         self.assertEqual(7, self.mook.hp)
 
-        # Will flip Black Joker
-        self.mook.attack(self.mook, deck=deck)
+        # Will flip 1 of Tomes and miss
+        self.assertFalse(self.mook.attack(self.mook, deck=deck))
         self.assertEqual(7, self.mook.hp)
 
-        # Flip 1 of Crows
-        self.mook.attack(self.mook, deck=deck)
-        self.assertEqual(6, self.mook.hp)
+        # Flip 11 of Tomes - straight damage flip
+        # Flip 8 of Rams - moderate damage
+        self.assertTrue(self.mook.attack(self.mook, deck=deck))
+        self.assertEqual(5, self.mook.hp)
 
-        # Flip 8 of Crows
-        self.mook.attack(self.mook, deck=deck)
-        self.assertEqual(4, self.mook.hp)
-
-        # Flip 13 of Crows
-        self.mook.attack(self.mook, deck=deck)
+        # Flip 11 of Tomes - straight damage flip
+        # Flip Red Joker - strong + weak damage
+        self.assertTrue(self.mook.attack(self.mook, deck=deck))
         self.assertEqual(1, self.mook.hp)
 
-        # Flip Red Joker
-        self.mook.attack(self.mook, deck=deck)
-        self.assertEqual(-3, self.mook.hp)
+        # Flip 11 of Tomes - straight damage flip
+        # Flip 1 of Rams - weak damage
+        self.assertTrue(self.mook.attack(self.mook, deck=deck))
+        self.assertEqual(0, self.mook.hp)
+
         self.assertTrue(self.mook.dead)
 
 
