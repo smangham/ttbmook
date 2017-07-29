@@ -11,10 +11,11 @@ class Mook:
         self.willpower = willpower
         self.defence = defence
         self.hp = hp
-        self.dead = False
-        self.is_enforcer = is_enforcer
 
+        self.is_enforcer = is_enforcer
         self.attacks = attacks
+
+        self.dead = False
 
     @property
     def hp(self):
@@ -113,7 +114,6 @@ class Attack:
             target.hp -= damage
             return True
         return False
-
 
     @classmethod
     def from_json(cls, json_block):

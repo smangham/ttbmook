@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": ["mooks"],
+  "properties": {
+    "mooks": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/mook"}
+    }
+  },
+
+  "definitions": {
+
+    "mook": {
+      "description": "A Malifaux TTB NPC",
+      "type": "object",
+      "required": ["name", "willpower", "defence", "HP", "skills", "attacks"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string"},
+        "willpower": {"type": "integer"},
+        "defence": {"type": "integer"},
+        "HP": {"type": "integer"},
+        "skills": {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {"$ref": "#/definitions/skill"}
+          }
+        },
+        "attacks": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/attack"}
+        }
+      }
+    },
+
+    "skill": {
+      "type": "integer"
+    },
+
+    "attack": {
+      "type": "object",
+      "required": ["name", "range", "AP", "skill", "triggers"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string"},
+        "range": {"type": "integer"},
+        "AP": {"type": "integer"},
+        "skill": {"type": "string"},
+        "triggers": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/trigger"}
+        }
+      }
+    },
+
+    "trigger": {
+      "type": "object",
+      "required": ["suit", "type", "ability"],
+      "additionalProperties": false,
+      "properties": {
+        "suit": {"type": "string", "enum": ["C", "M", "R", "T"]},
+        "type": {"type": "string"},
+        "ability": {"type": "string"}
+      }
+    }
+  }
+}
