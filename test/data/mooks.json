@@ -6,7 +6,7 @@
       "defence": 5,
       "HP": 7,
       "skills": {
-        "melee": 5,
+        "melee": 3,
         "athletics": 3
       },
       "attacks": [

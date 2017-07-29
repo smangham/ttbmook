@@ -5,12 +5,24 @@ class Mook:
     """
     A Malifaux TTB NPC.
     """
-    def __init__(self, name, willpower, defence, hp,
+    def __init__(self, name, willpower, defence, hp, skills,
                  is_enforcer=False, attacks=None):
+        """
+        Construct a Mook (Malifaux TTB NPC).
+
+        :param str name: Mook type
+        :param int willpower:
+        :param int defence:
+        :param int hp:
+        :param AttrDict[str, int] skills: Skill values
+        :param bool is_enforcer: Is the Mook at least Enforcer level?
+        :param Union(List[Attack], None) attacks: List of attacks
+        """
         self.name = name
         self.willpower = willpower
         self.defence = defence
         self.hp = hp
+        self.skills = skills
 
         self.is_enforcer = is_enforcer
         self.attacks = attacks
@@ -41,7 +53,7 @@ class Mook:
         :param deck: Deck from which to draw Cards
         :return bool: Attack hit?
         """
-        return self.attacks[attack_id].attack(target, deck)
+        return self.attacks[attack_id].attack(self, target, deck)
 
     @classmethod
     def mooks_from_json(cls, filename):
@@ -73,7 +85,8 @@ class Mook:
             attacks.append(Attack.from_json(json_attack))
 
         mook = cls(name=json_block.name, willpower=json_block.willpower,
-                   defence=json_block.defence, hp=json_block.HP, attacks=attacks)
+                   defence=json_block.defence, hp=json_block.HP, skills=json_block.skills,
+                   attacks=attacks)
         return mook
 
 
@@ -98,17 +111,19 @@ class Attack:
         damage_map = ["Mild", "Moderate", "Severe", "Mild+Severe"]
         return self.damage[damage_map.index(damage_string)]
 
-    def attack(self, target, deck):
+    def attack(self, attacker, target, deck):
         """
         Perform this attack against a target.
 
+        :param Mook attacker: Mook making the attack
         :param Mook target: Target Mook of this attack
         :param deck: Deck from which to draw Cards
         :return bool: Attack hit?
         """
-        flip = deck.flip()
-        if flip.value() >= target.defence:
-            modifier = (flip.value() - target.defence)//5 - 1
+        # TODO neater way of getting attacker data
+        flip = deck.flip().value() + attacker.skills[self.skill]
+        if flip >= target.defence:
+            modifier = (flip - target.defence)//5 - 1
             flip = deck.flip(modifier=modifier)
             damage = self.get_damage(flip.damage())
             target.hp -= damage

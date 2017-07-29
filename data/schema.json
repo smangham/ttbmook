@@ -50,6 +50,12 @@
         "triggers": {
           "type": "array",
           "items": {"$ref": "#/definitions/trigger"}
+        },
+        "damage": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {"type": "integer"}
         }
       }
     },

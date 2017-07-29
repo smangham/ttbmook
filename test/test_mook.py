@@ -9,11 +9,11 @@ class DummyDeck:
     def __init__(self):
         self.cards = [
             Card(1, "T"),
-            Card(11, "T"),
+            Card(8, "T"),
             Card(8, "R"),
-            Card(11, "T"),
+            Card(8, "T"),
             Card(14, "CMRT"),
-            Card(11, "T"),
+            Card(8, "T"),
             Card(1, "R"),
         ]
 
@@ -31,6 +31,8 @@ class MookTest(unittest.TestCase):
         self.assertEqual(10, self.mook.willpower)
         self.assertEqual(5, self.mook.defence)
         self.assertEqual(7, self.mook.hp)
+        self.assertEqual(3, self.mook.skills.melee)
+        self.assertEqual(3, self.mook.skills.athletics)
 
     def test_json_load_attacks(self):
         self.assertEqual(1, len(self.mook.attacks))
@@ -67,17 +69,17 @@ class MookTest(unittest.TestCase):
         self.assertFalse(self.mook.attack(self.mook, deck=deck))
         self.assertEqual(7, self.mook.hp)
 
-        # Flip 11 of Tomes - straight damage flip
+        # Flip 8 of Tomes - straight damage flip
         # Flip 8 of Rams - moderate damage
         self.assertTrue(self.mook.attack(self.mook, deck=deck))
         self.assertEqual(5, self.mook.hp)
 
-        # Flip 11 of Tomes - straight damage flip
+        # Flip 8 of Tomes - straight damage flip
         # Flip Red Joker - strong + weak damage
         self.assertTrue(self.mook.attack(self.mook, deck=deck))
         self.assertEqual(1, self.mook.hp)
 
-        # Flip 11 of Tomes - straight damage flip
+        # Flip 8 of Tomes - straight damage flip
         # Flip 1 of Rams - weak damage
         self.assertTrue(self.mook.attack(self.mook, deck=deck))
         self.assertEqual(0, self.mook.hp)
