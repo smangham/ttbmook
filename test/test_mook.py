@@ -7,6 +7,7 @@ from ttbmook.deck import Card
 
 class DummyDeck:
     def __init__(self):
+        self.i = 0
         self.cards = [
             Card(1, "T"),
             Card(8, "T"),
@@ -18,7 +19,9 @@ class DummyDeck:
         ]
 
     def flip(self, *args, **kwargs):
-        return self.cards.pop(0)
+        card = self.cards[self.i % len(self.cards)]
+        self.i += 1
+        return card
 
 
 class MookTest(unittest.TestCase):
@@ -85,6 +88,22 @@ class MookTest(unittest.TestCase):
         self.assertEqual(0, self.mook.hp)
 
         self.assertTrue(self.mook.dead)
+
+    def test_mook_battle(self):
+        self.mook.is_enforcer = True
+        opponent = Mook.mooks_from_json(os.path.join("data", "mooks.json"))[0]
+
+        deck = DummyDeck()
+
+        for i in range(5):
+            opponent.attack(self.mook, deck=deck)
+            self.mook.attack(opponent, deck=deck)
+
+        # TODO These numbers will change once flip modifiers are applied
+        self.assertTrue(opponent.dead)
+        self.assertEqual(-1, opponent.hp)
+        self.assertEqual(-1, self.mook.hp)
+        self.assertEqual(Card(8, "T"), deck.flip())
 
 
 if __name__ == '__main__':

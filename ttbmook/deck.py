@@ -10,6 +10,8 @@ class Card:
         return "Card()"
     def __str__(self):
         return "{}{}".format(self._value, self._suit)
+    def __eq__(self, other):
+        return self._value == other._value and self._suit == other._suit
     def value(self):
         return self._value
     def is_suit(self, suit):

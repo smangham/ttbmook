@@ -21,6 +21,7 @@ class Mook:
         self.name = name
         self.willpower = willpower
         self.defence = defence
+        self.max_hp = hp
         self.hp = hp
         self.skills = skills
 
@@ -40,6 +41,7 @@ class Mook:
 
         :param int x: New hp
         """
+        assert x <= self.max_hp
         self.__hp = x
         if self.__hp <= 0 and not self.is_enforcer:
             self.dead = True
@@ -61,7 +63,7 @@ class Mook:
         Get list of Mooks from JSON file.
 
         :param str filename: JSON file to process
-        :return: List of Mooks
+        :return List[Mook]: List of Mooks
         """
         with open(filename) as f:
             json_all = json.load(f, object_hook=AttrDict)
